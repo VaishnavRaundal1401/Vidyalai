@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import axios from 'axios';
 
 const PostContainer = styled.div(() => ({
   width: '300px',
@@ -26,15 +27,15 @@ const Carousel = styled.div(() => ({
 }));
 
 const CarouselItem = styled.div(() => ({
-  flex: '0 0 auto',
+  flex: '0 0 100%', // Ensure each item takes up full width
   scrollSnapAlign: 'start',
 }));
 
 const Image = styled.img(() => ({
-  width: '280px',
+  width: '100%',
   height: 'auto',
   maxHeight: '300px',
-  padding: '10px',
+  // padding: '10px',
 }));
 
 const Content = styled.div(() => ({
@@ -46,39 +47,64 @@ const Content = styled.div(() => ({
 
 const Button = styled.button(() => ({
   position: 'absolute',
-  bottom: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
   backgroundColor: 'rgba(255, 255, 255, 0.5)',
   border: 'none',
   color: '#000',
   fontSize: '20px',
   cursor: 'pointer',
   height: '50px',
+  width: '30px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 }));
 
-const PrevButton = styled(Button)`
-  left: 10px;
+const PrevButton = styled(Button)`  
+  left: 1px;
 `;
 
 const NextButton = styled(Button)`
-  right: 10px;
+  right: 0.1px
 `;
 
 const Post = ({ post }) => {
   const carouselRef = useRef(null);
+  const [images, setImages] = useState(
+    post.images.map((image, index) => ({ ...image, uniqueId: index }))
+  );
+  const imageCounterRef = useRef(post.images.length);
 
-  const handleNextClick = () => {
+  const fetchNewImage = async () => {
+    const response = await axios.get('https://picsum.photos/280/300', { responseType: 'arraybuffer' });
+    const newImageUrl = URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+    return newImageUrl;
+  };
+
+  const handleNextClick = async () => {
     if (carouselRef.current) {
+      const newImageUrl = await fetchNewImage();
+      setImages((prevImages) => [
+        ...prevImages.slice(2),
+        { url: newImageUrl, uniqueId: imageCounterRef.current++ }
+      ]);
       carouselRef.current.scrollBy({
-        left: 50,
+        left: carouselRef.current.clientWidth, // Scroll by the full width of one image
         behavior: 'smooth',
       });
     }
   };
 
-  const handlePrevClick = () => {
+  const handlePrevClick = async () => {
     if (carouselRef.current) {
+      const newImageUrl = await fetchNewImage();
+      setImages((prevImages) => [
+        { url: newImageUrl, uniqueId: imageCounterRef.current++ },
+        ...prevImages.slice(0, -1)
+      ]);
       carouselRef.current.scrollBy({
-        left: -70,
+        left: -carouselRef.current.clientWidth, // Scroll by the full width of one image
         behavior: 'smooth',
       });
     }
@@ -88,8 +114,8 @@ const Post = ({ post }) => {
     <PostContainer>
       <CarouselContainer>
         <Carousel ref={carouselRef}>
-          {post.images.map((image, index) => (
-            <CarouselItem key={index}>
+          {images.map((image) => (
+            <CarouselItem key={image.uniqueId}>
               <Image src={image.url} alt={post.title} />
             </CarouselItem>
           ))}
@@ -108,11 +134,14 @@ const Post = ({ post }) => {
 Post.propTypes = {
   post: PropTypes.shape({
     content: PropTypes.any,
-    images: PropTypes.shape({
-      map: PropTypes.func,
-    }),
-    title: PropTypes.any,
-  }),
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        url: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    title: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default Post;
