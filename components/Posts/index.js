@@ -39,14 +39,14 @@ export default function Posts() {
   const { isSmallerDevice } = useWindowWidth();
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchPosts = async () => {
       const { data: posts } = await axios.get('/api/v1/posts', {
         params: { start: 0, limit: isSmallerDevice ? 5 : 10 },
       });
       setPosts(posts);
     };
 
-    fetchPost();
+    fetchPosts();
   }, [isSmallerDevice]);
 
   const handleClick = () => {
