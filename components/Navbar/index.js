@@ -1,37 +1,44 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const Navbar = styled('nav')(() => ({
-  backgroundColor: '#333',
-  color: '#fff',
-  width: '100%',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  zIndex: 1000,
-}));
+const Container = styled.div`
+  position: sticky;
+  top: 0;
+  z-index:1000;
 
-const ListItem = styled('li')(() => ({
-  display: 'inline-block',
-  marginRight: '20px',
-  fontSize: '18px',
-  cursor: 'pointer',
-}));
+`;
 
-const Link = styled('a')(() => ({
-  color: '#fff',
-  textDecoration: 'none',
+const Navbar = styled.nav`
+  background-color: #333;
+  color: #fff;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  z-index: 1000;
+`;
 
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-}));
+const ListItem = styled.li`
+  display: inline-block;
+  margin-right: 20px;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 15px 
+`;
+
+const Link = styled.a`
+  color: #fff;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 const TopNavbar = () => {
   return (
-    <div>
+    <Container>
       <Navbar>
-        <ul style={{}}>
+        <ul style={{ margin: 0, padding: 0 }}>
           <ListItem>
             <Link href={'/'}>Home</Link>
           </ListItem>
@@ -40,7 +47,7 @@ const TopNavbar = () => {
           </ListItem>
         </ul>
       </Navbar>
-    </div>
+    </Container>
   );
 };
 
