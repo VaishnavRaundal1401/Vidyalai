@@ -67,6 +67,28 @@ const NextButton = styled(Button)`
   right: 0.1px;
 `;
 
+const Avatar = styled.div(() => ({
+  width: '40px',
+  height: '40px',
+  borderRadius: '50%',
+  backgroundColor: '#007bff',
+  color: '#fff',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontWeight: 'bold',
+  fontSize: '16px',
+  marginRight: '10px',
+  marginLeft:'10px'
+}));
+
+const UserInfo = styled.div(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '10px',
+  marginTop:'10px'
+}));
+
 const Post = ({ post }) => {
   const carouselRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -96,9 +118,16 @@ const Post = ({ post }) => {
       }, 500);
     }
   };
-
+  
   return (
     <PostContainer>
+      <UserInfo>
+        <Avatar>VR</Avatar>
+        <div>
+          <strong>alsdjaklsjdn</strong><br/>
+          <span>aksjdkasnda</span>
+        </div>
+      </UserInfo>
       <CarouselContainer>
         <Carousel ref={carouselRef}>
           {post.images.map((image, index) => (
