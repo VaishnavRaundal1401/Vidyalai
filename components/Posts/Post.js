@@ -71,7 +71,7 @@ const Avatar = styled.div(() => ({
   width: '40px',
   height: '40px',
   borderRadius: '50%',
-  backgroundColor: '#007bff',
+  backgroundColor: 'gray',
   color: '#fff',
   display: 'flex',
   alignItems: 'center',
@@ -118,14 +118,19 @@ const Post = ({ post }) => {
       }, 500);
     }
   };
+
+  const getInitials = (name) => {
+    const names = name.split(' ');
+    return names.map(n => n[0]).join('');
+  };
   
   return (
     <PostContainer>
-      <UserInfo>
-        <Avatar>VR</Avatar>
+     <UserInfo>
+        <Avatar>{getInitials(post.user.name)}</Avatar>
         <div>
-          <strong>alsdjaklsjdn</strong><br/>
-          <span>aksjdkasnda</span>
+          <strong>{post.user.name}</strong><br/>
+          <span>{post.user.email}</span>
         </div>
       </UserInfo>
       <CarouselContainer>
@@ -149,7 +154,10 @@ const Post = ({ post }) => {
 
 Post.propTypes = {
   post: PropTypes.shape({
-    content: PropTypes.any,
+    user: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+    }).isRequired,
     images: PropTypes.arrayOf(
       PropTypes.shape({
         url: PropTypes.string.isRequired,
